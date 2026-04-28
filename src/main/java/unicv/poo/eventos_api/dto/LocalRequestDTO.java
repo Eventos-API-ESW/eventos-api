@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 
-public class LocalDTO{
-
+public record LocalRequestDTO(
     private Long id;
 
     @NotBlank(message = "O nome é obrigatório")
@@ -22,5 +21,5 @@ public class LocalDTO{
     @NotNull(message = "A capacidade é obrigatório")
     @Min(value = 1 , message = "A capacidade deve ser no minimo 1")
     private Integer capacidade;
-
-}
+)
+{}

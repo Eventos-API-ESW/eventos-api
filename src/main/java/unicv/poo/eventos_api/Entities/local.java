@@ -19,7 +19,7 @@ public class Local {
     @Column(nullable = false)
     private String nome;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false )
     private String endereco;
 
     @Column(nullable = false)
