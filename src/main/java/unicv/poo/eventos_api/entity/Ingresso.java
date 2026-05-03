@@ -28,11 +28,9 @@ public class Ingresso {
     @Column(nullable = false)
     private String tipo;
 
-    @Positive
     @Column(nullable = false)
     private BigDecimal preco;
 
-    @Positive
     @Column(nullable = false)
     private Integer quantidade;
 

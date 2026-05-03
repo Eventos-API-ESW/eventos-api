@@ -14,7 +14,7 @@ public record IngressoRequestDto(
         @NotNull(message = "O id do evento é obrigatório.")
         Long eventoId,
 
-        @NotBlank(message = "O tipo é obrigatório.")
+        @NotNull(message = "O tipo é obrigatório.")
         @ValueOfEnum(enumClass = TipoIngressoEnum.class)
         String tipo,
 
@@ -22,7 +22,7 @@ public record IngressoRequestDto(
         @Positive(message = "O preço deve ser maior que zero.")
         BigDecimal preco,
 
-        @NotNull(message = "A quantidade não pode ser nula")
+        @NotNull(message = "A quantidade é obrigatória.")
         @PositiveOrZero(message = "A quantidade não pode ser negativa.")
         Integer quantidade
 
