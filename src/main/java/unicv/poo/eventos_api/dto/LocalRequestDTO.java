@@ -2,24 +2,19 @@ package unicv.poo.eventos_api.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
 
-
-@Data
-@NoArgsConstructor
-
+/* mudanca dia 04/05/2026 */
 public record LocalRequestDTO(
-    private Long id;
+    Long id,
 
     @NotBlank(message = "O nome é obrigatório")
-    private String nome;
+    String nome,
 
-    @NotBlank(message = "O endereco é obrigatório")
-    private String endereco;
+    @NotBlank(message = "O endereço é obrigatório")
+    String endereco,
 
-    @NotNull(message = "A capacidade é obrigatório")
-    @Min(value = 1 , message = "A capacidade deve ser no minimo 1")
-    private Integer capacidade;
-)
-{}
+    @NotNull(message = "A capacidade é obrigatória")
+    @Min(value = 1, message = "A capacidade deve ser no mínimo 1")
+    Integer capacidade
+) {}

@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+/* mudanca dia 04/05/2026 */
+
 @Data
 @Entity
 @Table(name = "locais") 
