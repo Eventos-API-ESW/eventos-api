@@ -1,4 +1,4 @@
-package unicv.poo.eventos_api.Entities;
+package unicv.poo.eventos_api.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
