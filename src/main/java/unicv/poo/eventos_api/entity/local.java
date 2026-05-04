@@ -5,6 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+<<<<<<< Updated upstream
+=======
+/* mudanca dia 02/05/2026 */
+
+>>>>>>> Stashed changes
 @Data
 @Entity
 @Table(name = "locais") 
