@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 @Service
 public class LocalService {
 
