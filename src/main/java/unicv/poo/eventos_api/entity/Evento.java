@@ -37,8 +37,9 @@ public class Evento {
     @Column(nullable = false)
     private Integer capacidade;
 
-    @Column(name = "local_id", nullable = false)
-    private Long localId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "local_id", nullable = false)
+    private Local local;
 
     @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL)
     private List<Ingresso> ingressos;
