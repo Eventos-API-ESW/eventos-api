@@ -20,8 +20,8 @@ public class Ingresso {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne()
-    @JoinColumn(name = "evento_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "evento_id", nullable = false)
     private Evento evento;
 
     @Column(nullable = false)

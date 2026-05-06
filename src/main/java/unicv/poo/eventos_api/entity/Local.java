@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 /* mudanca dia 04/05/2026 */
 
@@ -27,4 +29,7 @@ public class Local {
 
     @Column(nullable = false)
     private int capacidade;
+
+    @OneToMany(mappedBy = "local")
+    private List<Evento> eventos;
 }
