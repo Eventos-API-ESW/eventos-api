@@ -1,8 +1,6 @@
 package unicv.poo.eventos_api.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,8 +20,9 @@ public class Ingresso {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long eventoId;
+    @ManyToOne()
+    @JoinColumn(name = "evento_id")
+    private Evento evento;
 
     @Column(nullable = false)
     private String tipo;

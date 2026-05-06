@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Table(name = "eventos")
@@ -38,4 +39,7 @@ public class Evento {
 
     @Column(name = "local_id", nullable = false)
     private Long localId;
+
+    @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL)
+    private List<Ingresso> ingressos;
 }
