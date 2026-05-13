@@ -1,8 +1,8 @@
 package unicv.poo.eventos_api.controller;
 
-import java.util.List;
-import java.util.Optional;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +12,11 @@ import unicv.poo.eventos_api.dto.LocalRequestDTO;
 import unicv.poo.eventos_api.dto.LocalResponseDTO;
 import unicv.poo.eventos_api.service.LocalService;
 
+import java.util.List;
+
 @Tag(name = "Locais", description = "Endpoints para gerenciamento de locais")
 @RestController
-@RequestMapping("api/locais")
+@RequestMapping("/api/locais")
 public class LocalController{
 
     @Autowired
@@ -30,36 +32,35 @@ public class LocalController{
     @Operation(summary = "Busca um local por ID", description = "Retorna os detalhes de um local especifico")
     @GetMapping("/{id}")
     public ResponseEntity<LocalResponseDTO> buscarPorId(@PathVariable Long id){
-        Optional<LocalResponseDTO> localResponseDTO = LocalService.buscarPorId(id);
-        return localResponseDTO.map(ResponseEntity::ok)
-                               .orElseGet(() -> ResponseEntity.notFound().build());
+         localResponseDTO local = LocalService.buscarPorId(id);
+        return ResponseEntity::ok(local);
     }
 
-    @Operation(summary = "Cria um novo usuário", description = "Cadastra um novo usuário no sistema")
+    @Operation(summary = "Registra um novo local", description = "Cadastra um novo local no sistema")
     @PostMapping
-    public ResponseEntity<ApiResponse<LocalRequestDTO>> criarUsuario(@Valid @RequestBody LocalRequestDTO localRequestDTO){
-        try{
-            // Tenta salvar o local
-            LocalRequestDTO savedLocal = localService.salvar(localRequestDTO);
+    public ResponseEntity<LocalResponseDTO> registrarLocal(@Valid @RequestBody LocalRequestDTO localRequestDTO){
+        LocalResponseDTO novoLocal = localService.salvar(localRequestDTO);
+        return ResponseEntity.HttpStatus(HttpStatus.CREATED).body(novoLocal);
 
-           // Retorna sucesso com o LocalRequestDTO salvo
-           ApiResponse<LocalRequestDTO> response = new ApiResponse<>(savedLocal);
-           return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (IllegalArgumentException e) {
-         // Cria um erro com a mensagem específica
-         ErroResponse erroResponse = new ErroResponse("Argumento inválido", e.getMessage());
-         ApiResponse<LocalRequestDTO> response = new ApiResponse<>(erroResponse);
-         return ResponseEntity.badRequest().body(response);
-        }catch (Exception e){
-         // Cria um erro genérico
-         ErroResponse erroResponse = new ErroResponse("Erro interno" , e.getMessage());
-         ApiResponse<LocalRequestDTO> response = new ApiResponse<>(erroResponse);
-         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-
-        }
-
+       
 
     }
+
+    @Operation(summary = "Atualiza um local" , description = "Atualiza um local do sistema pelo ID")
+    @PutMapping("/{id}")
+    public ResponseEntity<LocalResponseDTO>atualizarLocal(@PathVariable Long id , @Valid @RequestBody LocalRequestDTO localRequestDTO){
+        LocalResponseDTO localAtualizado = localService.atualizar(id, localRequestDTO);
+        return ResponseEntity.ok(localAtualizado);
+    }
+
+
+     @Operation(summary = "Deleta um local", description = "Remove um local do sistema pelo ID")
+        @DeleteMapping("/{id}")
+        public ResponseEntity<Void>deletarLocal(@PathVariable Long id){
+            localService.deletar(id);
+            return ResponseEntity.noContent().build();
+            
+        }
 
 
 }
