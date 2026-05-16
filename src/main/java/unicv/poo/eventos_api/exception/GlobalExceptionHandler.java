@@ -2,6 +2,7 @@ package unicv.poo.eventos_api.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -42,17 +44,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex, HttpServletRequest request) {
-        return buildErrorResponse(
-                "Ocorreu um erro interno inesperado no servidor.",
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "Erro interno do servidor",
-                request,
-                null
-        );
-    }
-
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ErrorResponse> handleNoResourceFound(NoResourceFoundException ex, HttpServletRequest request) {
         return buildErrorResponse(
@@ -71,6 +62,19 @@ public class GlobalExceptionHandler {
                 "Método não suportado para esta rota.",
                 HttpStatus.METHOD_NOT_ALLOWED,
                 "Método não permitido",
+                request,
+                null
+        );
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex, HttpServletRequest request) {
+        log.error("Erro inesperado", ex);
+
+        return buildErrorResponse(
+                "Ocorreu um erro interno inesperado no servidor.",
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Erro interno do servidor",
                 request,
                 null
         );
