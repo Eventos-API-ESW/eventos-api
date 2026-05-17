@@ -9,6 +9,9 @@ import unicv.poo.eventos_api.entity.Inscricao;
 @Mapper(componentModel = "spring")
 public interface InscricaoMapper {
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "dataInscricao", ignore = true)
+    @Mapping(target = "status", ignore = true)
     @Mapping(target = "participante.id", source = "participanteId")
     @Mapping(target = "evento.id", source = "eventoId")
     Inscricao toEntity(InscricaoRequestDTO dto);

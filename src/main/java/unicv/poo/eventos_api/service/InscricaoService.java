@@ -1,11 +1,11 @@
 package unicv.poo.eventos_api.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import unicv.poo.eventos_api.entity.Inscricao;
 import unicv.poo.eventos_api.repository.InscricaoRepository;
-import java.time.LocalDateTime;
-import java.time.LocalDate;
-import java.util.List;
 
 @Service
 public class InscricaoService {
@@ -29,12 +29,13 @@ public class InscricaoService {
         }
 
         int capacidadeMaxima = inscricao.getEvento().getLocal().getCapacidade();
+        Long eventoId = inscricao.getEvento().getId();
 
-        long totalInscritos = repository.countByEventoIdAndStatus(inscricao.getEvento().getId(), "CONFIRMADA");
+        long totalInscritos = repository.countByEventoIdAndStatus(eventoId, "CONFIRMADA");
 
         if (totalInscritos >= capacidadeMaxima) {
-            throw new RuntimeException(
-                    "Desculpe, esse evento já atingiu a capacidade máxima de " + capacidadeMaxima + " vagas.");
+            throw new RuntimeException("Desculpe, esse evento já atingiu a capacidade máxima de "
+                    + capacidadeMaxima + " vagas.");
         }
 
         inscricao.setDataInscricao(LocalDateTime.now());
@@ -42,5 +43,4 @@ public class InscricaoService {
 
         return repository.save(inscricao);
     }
-
 }
