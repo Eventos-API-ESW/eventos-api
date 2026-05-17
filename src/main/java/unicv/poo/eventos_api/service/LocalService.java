@@ -7,7 +7,8 @@ import unicv.poo.eventos_api.mapper.LocalMapper;
 import unicv.poo.eventos_api.repository.EventoRepository;
 import unicv.poo.eventos_api.repository.LocalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus; 
+import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException; 
 
@@ -29,7 +30,7 @@ public class LocalService {
         return localMapper.toResponseDTOList(locais);
     }
 
-    public LocalResponseDTO buscarPorId(Long id){
+    public LocalResponseDTO buscarPorId(@NonNull Long id){
         Local local = localRepository.findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Local não encontrado com o ID: " + id));
         return localMapper.toResponseDTO(local);
@@ -61,7 +62,7 @@ public class LocalService {
     }
     
 
-    public void deletar(Long id){
+    public void deletar(@NonNull Long id){
         if(!localRepository.existsById(id)){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Não é possivel remover: Local não encontrado.");
         }
