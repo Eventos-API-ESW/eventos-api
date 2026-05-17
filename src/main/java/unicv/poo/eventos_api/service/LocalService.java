@@ -47,8 +47,7 @@ public class LocalService {
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Não é possível atualizar: Local não encontrado."));
 
         if(localRequestDTO.capacidade()< localExistente.getCapacidade()){
-            boolean possuiEventoMaior = eventoRepository.existsByLocalIdAndParticipantesMaxGreaterThan(id, localRequestDTO.capacidade());
-
+        boolean possuiEventoMaior = eventoRepository.existsByLocalIdAndCapacidadeGreaterThan(id, localRequestDTO.capacidade());
             if(possuiEventoMaior){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível reduzir a capacidade: existe um evento previsto que excede a nova capacidade.");
             }
