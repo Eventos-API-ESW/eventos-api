@@ -27,14 +27,19 @@ public class EventoService {
 
     @Transactional
     public EventoResponseDto salvar(EventoRequestDto eventoRequestDto) {
-        validarCapacidadeComLocal(eventoRequestDto.localId(), eventoRequestDto.capacidade());
-
+        Evento evento = eventoMapper.toEntity(eventoRequestDto);
         Local local = localRepository.findById(eventoRequestDto.localId())
                 .orElseThrow(() -> new EntityNotFoundException("Local não encontrado."));
-
-        Evento evento = eventoMapper.toEntity(eventoRequestDto);
+        if (eventoRequestDto.capacidade() > local.getCapacidade()) {
+            throw new RegraNegocioException("A capacidade do evento não pode ser maior que a capacidade do local.");
+        }
+        boolean horarioOcupado = local.getEventos().stream()
+                .anyMatch(e -> e.getDataEvento().equals(eventoRequestDto.dataEvento())
+                        && e.getHorario().equals(eventoRequestDto.horario()));
+        if (horarioOcupado) {
+            throw new RegraNegocioException("Já existe um evento neste local na mesma data e horário.");
+        }
         evento.setLocal(local);
-
         return eventoMapper.toResponseDto(eventoRepository.save(evento));
     }
 
@@ -46,40 +51,36 @@ public class EventoService {
     public EventoResponseDto buscarPorId(Long id) {
         Evento evento = eventoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Evento informado não existe."));
-
         return eventoMapper.toResponseDto(evento);
-    }
-
-    private void validarCapacidadeComLocal(Long localId, Integer capacidadeEvento) {
-        Local local = localRepository.findById(localId)
-                .orElseThrow(() -> new EntityNotFoundException("Local não encontrado."));
-
-        if (capacidadeEvento > local.getCapacidade()) {
-            throw new RegraNegocioException("A capacidade do evento (" + capacidadeEvento + ") não pode ser maior que a capacidade do local escolhido (" + local.getCapacidade() + ").");
-        }
     }
 
     @Transactional
     public EventoResponseDto atualizar(Long id, EventoRequestDto eventoRequestDto) {
         Evento evento = eventoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Evento informado não existe."));
-
-        validarCapacidadeComLocal(eventoRequestDto.localId(), eventoRequestDto.capacidade());
-
+        Local local = localRepository.findById(eventoRequestDto.localId())
+                .orElseThrow(() -> new EntityNotFoundException("Local não encontrado."));
+        if (eventoRequestDto.capacidade() > local.getCapacidade()) {
+            throw new RegraNegocioException("A capacidade do evento não pode ser maior que a capacidade do local.");
+        }
+        boolean horarioOcupado = local.getEventos().stream()
+                .filter(e -> !e.getId().equals(id))
+                .anyMatch(e -> e.getDataEvento().equals(eventoRequestDto.dataEvento())
+                        && e.getHorario().equals(eventoRequestDto.horario()));
+        if (horarioOcupado) {
+            throw new RegraNegocioException("Já existe um evento neste local na mesma data e horário.");
+        }
         long inscritosAtuais = inscricaoRepository.countByEventoIdAndStatus(id, "Confirmada");
-
         if (eventoRequestDto.capacidade() < inscritosAtuais) {
             throw new RegraNegocioException("A capacidade não pode ser menor que as inscrições já confirmadas (" + inscritosAtuais + ").");
         }
-
-        Local local = localRepository.findById(eventoRequestDto.localId())
-                .orElseThrow(() -> new EntityNotFoundException("Local não encontrado."));
 
         evento.setNome(eventoRequestDto.nome());
         evento.setDescricao(eventoRequestDto.descricao());
         evento.setDataEvento(eventoRequestDto.dataEvento());
         evento.setHorario(eventoRequestDto.horario());
         evento.setCapacidade(eventoRequestDto.capacidade());
+        evento.setStatus(eventoRequestDto.status());
         evento.setLocal(local);
 
         return eventoMapper.toResponseDto(eventoRepository.save(evento));

@@ -47,6 +47,9 @@ public class Evento {
     @Column(nullable = false)
     private Integer capacidade;
 
+    @Column(nullable = false)
+    private String status;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "local_id", nullable = false)
     private Local local;
