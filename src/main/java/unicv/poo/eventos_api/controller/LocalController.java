@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import unicv.poo.eventos_api.dto.LocalRequestDTO;
@@ -31,7 +32,7 @@ public class LocalController {
 
     @Operation(summary = "Busca um local por ID", description = "Retorna os detalhes de um local especifico")
     @GetMapping("/{id}")
-    public ResponseEntity<LocalResponseDTO> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<LocalResponseDTO> buscarPorId(@PathVariable @NonNull Long id) {
         LocalResponseDTO local = localService.buscarPorId(id);
         return ResponseEntity.ok(local);
     }
@@ -52,7 +53,7 @@ public class LocalController {
 
     @Operation(summary = "Deleta um local", description = "Remove um local do sistema pelo ID")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarLocal(@PathVariable Long id) {
+    public ResponseEntity<Void> deletarLocal(@PathVariable @NonNull Long id) {
         localService.deletar(id);
         return ResponseEntity.noContent().build();
     }

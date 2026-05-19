@@ -7,7 +7,8 @@ import unicv.poo.eventos_api.mapper.LocalMapper;
 import unicv.poo.eventos_api.repository.EventoRepository;
 import unicv.poo.eventos_api.repository.LocalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus; 
+import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException; 
 
@@ -29,7 +30,7 @@ public class LocalService {
         return localMapper.toResponseDTOList(locais);
     }
 
-    public LocalResponseDTO buscarPorId(Long id){
+    public LocalResponseDTO buscarPorId(@NonNull Long id){
         Local local = localRepository.findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Local não encontrado com o ID: " + id));
         return localMapper.toResponseDTO(local);
@@ -46,8 +47,7 @@ public class LocalService {
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Não é possível atualizar: Local não encontrado."));
 
         if(localRequestDTO.capacidade()< localExistente.getCapacidade()){
-            boolean possuiEventoMaior = eventoRepository.existsByLocalIdAndParticipantesMaxGreaterThan(id, localRequestDTO.capacidade());
-
+        boolean possuiEventoMaior = eventoRepository.existsByLocalIdAndCapacidadeGreaterThan(id, localRequestDTO.capacidade());
             if(possuiEventoMaior){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível reduzir a capacidade: existe um evento previsto que excede a nova capacidade.");
             }
@@ -61,7 +61,7 @@ public class LocalService {
     }
     
 
-    public void deletar(Long id){
+    public void deletar(@NonNull Long id){
         if(!localRepository.existsById(id)){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Não é possivel remover: Local não encontrado.");
         }
