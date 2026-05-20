@@ -32,4 +32,13 @@ public class Local {
 
     @OneToMany(mappedBy = "local")
     private List<Evento> eventos;
+
+    public boolean isAtivo() {
+        return isAtivo();
+    }
+
+    public static void setAtivo(boolean b) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setAtivo'");
+    }
 }

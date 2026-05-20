@@ -63,17 +63,20 @@ public class LocalService {
     }
     
 
-    public void deletar(@NonNull Long id){
-        if(!localRepository.existsById(id)){
-            throw new EntityNotFoundException("Não é possivel remover: Local não encontrado.");
-        }
+   public void deletar(@NonNull Long id){
+   
+    Local local = localRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Não é possivel remover: Local não encontrado."));
 
-        boolean possuiEventoFuturo = eventoRepository.existsByLocalIdAndDataAfter(id, LocalDateTime.now());
+    // 2. Validação da regra de negócio (se existem eventos futuros)
+    boolean possuiEventoFuturo = eventoRepository.existsByLocalIdAndDataAfter(id, LocalDateTime.now());
 
-        if(possuiEventoFuturo){
-              throw new IllegalStateException("Não é possivel remover o local , pois ele está vinculado a um evento em aberto/futuro");
-        }
-        local.setAtivo(false);
-        localRepository.save(local);
+    if(possuiEventoFuturo){
+          throw new IllegalStateException("Não é possivel remover o local, pois ele está vinculado a um evento em aberto/futuro");
     }
+    
+    local.setAtivo(false);
+    
+    localRepository.save(local);
+}
 }
