@@ -8,6 +8,5 @@ public interface InscricaoRepository extends JpaRepository<Inscricao, Long>{
     List<Inscricao>findByEventoId(Long eventoId);
     long countByEventoIdAndStatus(Long eventoId, String status);
 
-    List<Inscricao> findByParticipanteId(Long participanteId);// Método para buscar inscrições por ID do participante, será utilizado na exclusão de um participante para remover suas inscrições associadas.
-
+    List<Inscricao> findByParticipanteId(Long participanteId);
 }
