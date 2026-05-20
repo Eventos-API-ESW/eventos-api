@@ -4,14 +4,14 @@ package unicv.poo.eventos_api.service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // NOVO - garante transação atômica
+import org.springframework.transaction.annotation.Transactional;
 import unicv.poo.eventos_api.dto.ParticipanteRequestDto;
 import unicv.poo.eventos_api.dto.ParticipanteResponseDto;
 import unicv.poo.eventos_api.entity.Participante;
-import unicv.poo.eventos_api.entity.Inscricao; // NOVO - importa entidade Inscrição
+import unicv.poo.eventos_api.entity.Inscricao; 
 import unicv.poo.eventos_api.mapper.ParticipanteMapper;
 import unicv.poo.eventos_api.repository.ParticipanteRepository;
-import unicv.poo.eventos_api.repository.InscricaoRepository; // NOVO - importa repositório de Inscrição
+import unicv.poo.eventos_api.repository.InscricaoRepository;
 
 @Service
 public class ParticipanteService {
