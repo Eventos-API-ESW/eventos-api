@@ -17,7 +17,6 @@ import unicv.poo.eventos_api.entity.Inscricao;
 import unicv.poo.eventos_api.mapper.InscricaoMapper;
 import unicv.poo.eventos_api.service.InscricaoService;
 
-
 @RestController
 @RequestMapping("/api/inscricoes")
 public class InscricaoController {
@@ -55,13 +54,13 @@ public class InscricaoController {
     @GetMapping("/evento/{eventoId}")
     public List<InscricaoResponseDTO> listarPorEvento(@PathVariable Long eventoId) {
         return service.listarPorEvento(eventoId)
-        .stream()
-        .map(mapper::toResponseDto)
-        .toList();
+                .stream()
+                .map(mapper::toResponseDto)
+                .toList();
     }
 
     @PatchMapping("/{id}/cancelar")
-    public InscricaoResponseDTO cancelarInscricao(@PathVariable Long id){
+    public InscricaoResponseDTO cancelarInscricao(@PathVariable Long id) {
         Inscricao cancelada = service.cancelarInscricao(id);
         return mapper.toResponseDto(cancelada);
     }
