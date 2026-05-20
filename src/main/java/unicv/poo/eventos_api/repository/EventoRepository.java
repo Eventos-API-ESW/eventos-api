@@ -12,7 +12,6 @@ import unicv.poo.eventos_api.entity.Evento; // Ajustado para Evento
 @Repository
 public interface EventoRepository extends JpaRepository<Evento, Long> {
 
-    // Ajustado para 'LocalId' e 'Capacidade', combinando com a sua Entity Evento
     boolean existsByLocalIdAndCapacidadeGreaterThan(Long localId, int capacidade);
     
 }
