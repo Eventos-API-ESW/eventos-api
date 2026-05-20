@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -65,6 +66,12 @@ public class LocalService {
     public void deletar(@NonNull Long id){
         if(!localRepository.existsById(id)){
             throw new EntityNotFoundException("Não é possivel remover: Local não encontrado.");
+        }
+
+        boolean possuiEventoFuturo = eventoRepository.existsByLocalIdAndDataAfter(id, LocalDateTime.now());
+
+        if(possuiEventoFuturo){
+              throw new IllegalStateException("Não é possivel remover o local , pois ele está vinculado a um evento em aberto/futuro");
         }
         localRepository.deleteById(id);
     }
