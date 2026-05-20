@@ -7,11 +7,12 @@ import org.springframework.stereotype.Service;
 import unicv.poo.eventos_api.dto.EventoRequestDto;
 import unicv.poo.eventos_api.dto.EventoResponseDto;
 import unicv.poo.eventos_api.entity.Evento;
+import unicv.poo.eventos_api.entity.Ingresso;
 import unicv.poo.eventos_api.entity.Local;
+import unicv.poo.eventos_api.enums.StatusEventoEnum;
 import unicv.poo.eventos_api.exception.RegraNegocioException;
 import unicv.poo.eventos_api.mapper.EventoMapper;
 import unicv.poo.eventos_api.repository.EventoRepository;
-import unicv.poo.eventos_api.repository.InscricaoRepository;
 import unicv.poo.eventos_api.repository.LocalRepository;
 
 import java.util.List;
@@ -22,7 +23,6 @@ public class EventoService {
 
     private final EventoRepository eventoRepository;
     private final EventoMapper eventoMapper;
-    private final InscricaoRepository inscricaoRepository;
     private final LocalRepository localRepository;
 
     @Transactional
@@ -39,6 +39,7 @@ public class EventoService {
         if (horarioOcupado) {
             throw new RegraNegocioException("Já existe um evento neste local na mesma data e horário.");
         }
+        evento.setStatus(StatusEventoEnum.ABERTO.name());
         evento.setLocal(local);
         return eventoMapper.toResponseDto(eventoRepository.save(evento));
     }
@@ -70,9 +71,13 @@ public class EventoService {
         if (horarioOcupado) {
             throw new RegraNegocioException("Já existe um evento neste local na mesma data e horário.");
         }
-        long inscritosAtuais = inscricaoRepository.countByEventoIdAndStatus(id, "Confirmada");
-        if (eventoRequestDto.capacidade() < inscritosAtuais) {
-            throw new RegraNegocioException("A capacidade não pode ser menor que as inscrições já confirmadas (" + inscritosAtuais + ").");
+
+        int quantidadeIngressos = evento.getIngressos().stream()
+                .mapToInt(Ingresso::getQuantidade)
+                .sum();
+        if (eventoRequestDto.capacidade() < quantidadeIngressos) {
+            throw new RegraNegocioException(
+                    "A capacidade não pode ser menor que a quantidade total de ingressos (" + quantidadeIngressos + ").");
         }
 
         evento.setNome(eventoRequestDto.nome());
@@ -80,16 +85,16 @@ public class EventoService {
         evento.setDataEvento(eventoRequestDto.dataEvento());
         evento.setHorario(eventoRequestDto.horario());
         evento.setCapacidade(eventoRequestDto.capacidade());
-        evento.setStatus(eventoRequestDto.status());
         evento.setLocal(local);
 
         return eventoMapper.toResponseDto(eventoRepository.save(evento));
     }
 
+    @Transactional
     public void deletar(Long id) {
-        if (!eventoRepository.existsById(id)) {
-            throw new EntityNotFoundException("Evento informado não existe.");
-        }
-        eventoRepository.deleteById(id);
+        Evento evento = eventoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Evento informado não existe."));
+        evento.setStatus(StatusEventoEnum.CANCELADO.name());
+        eventoRepository.save(evento);
     }
 }

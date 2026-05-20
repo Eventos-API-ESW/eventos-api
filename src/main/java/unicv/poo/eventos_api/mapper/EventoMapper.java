@@ -14,7 +14,10 @@ public interface EventoMapper {
     @Mapping(source = "local.id", target = "localId")
     EventoResponseDto toResponseDto(Evento evento);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "local", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "ingressos", ignore = true)
     Evento toEntity(EventoRequestDto eventoRequestDto);
 
     List<EventoResponseDto> toResponseDtoList(List<Evento> eventoList);
