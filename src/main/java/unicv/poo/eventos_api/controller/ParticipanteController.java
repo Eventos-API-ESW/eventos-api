@@ -62,8 +62,7 @@ public class ParticipanteController {
 
     @Operation(summary = "Atualizar", description = "Atualiza um participante existente pelo ID.")
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<?>> atualizar(@PathVariable Long id,
-            @Valid @RequestBody ParticipanteRequestDto participanteDTO) {
+    public ResponseEntity<ApiResponse<?>> atualizar(@PathVariable Long id,@Valid @RequestBody ParticipanteRequestDto participanteDTO) {
         try {
             ParticipanteResponseDto atualizado = participanteService.atualizar(id, participanteDTO);
             return ResponseEntity.ok(new ApiResponse<>(atualizado));
