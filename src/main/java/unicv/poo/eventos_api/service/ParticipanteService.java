@@ -47,34 +47,28 @@ public class ParticipanteService {
     }
 
     public ParticipanteResponseDto atualizar(Long id, ParticipanteRequestDto participanteDTO) {
-        // Busca o participante existente
         Participante participante = participanteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Participante não encontrado"));
         
-        // Valida nome duplicado (exceto se for o mesmo nome)
         if (!participante.getNome().equals(participanteDTO.nome()) &&
                 participanteRepository.existsByNome(participanteDTO.nome())) {
             throw new RuntimeException("Nome já cadastrado");
         }
         
-        // Valida email duplicado (exceto se for o mesmo email)
         if (!participante.getEmail().equals(participanteDTO.email()) &&
                 participanteRepository.existsByEmail(participanteDTO.email())) {
             throw new RuntimeException("Email já cadastrado");
         }
         
-        // Valida telefone duplicado (exceto se for o mesmo telefone)
         if (!participante.getTelefone().equals(participanteDTO.telefone()) &&
                 participanteRepository.existsByTelefone(participanteDTO.telefone())) {
             throw new RuntimeException("Telefone já cadastrado");
         }
         
-        // Atualiza os dados
         participante.setNome(participanteDTO.nome());
         participante.setEmail(participanteDTO.email());
         participante.setTelefone(participanteDTO.telefone());
         
-        // Salva e retorna DTO
         return participanteMapper.toDTO(participanteRepository.save(participante));
     }
 
