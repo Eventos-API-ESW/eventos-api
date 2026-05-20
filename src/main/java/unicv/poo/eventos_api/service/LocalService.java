@@ -73,6 +73,7 @@ public class LocalService {
         if(possuiEventoFuturo){
               throw new IllegalStateException("Não é possivel remover o local , pois ele está vinculado a um evento em aberto/futuro");
         }
-        localRepository.deleteById(id);
+        local.setAtivo(false);
+        localRepository.save(local);
     }
 }
