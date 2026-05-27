@@ -1,6 +1,7 @@
 package unicv.poo.eventos_api.service;
 
 import unicv.poo.eventos_api.entity.Local;
+import unicv.poo.eventos_api.enums.StatusEventoEnum;
 import unicv.poo.eventos_api.exception.RegraNegocioException;
 import unicv.poo.eventos_api.dto.LocalRequestDTO;
 import unicv.poo.eventos_api.dto.LocalResponseDTO;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -65,18 +65,16 @@ public class LocalService {
 
    public void deletar(@NonNull Long id){
    
-    Local local = localRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Não é possivel remover: Local não encontrado."));
-
-    // 2. Validação da regra de negócio (se existem eventos futuros)
-    boolean possuiEventoFuturo = eventoRepository.existsByLocalIdAndDataAfter(id, LocalDateTime.now());
-
-    if(possuiEventoFuturo){
-          throw new IllegalStateException("Não é possivel remover o local, pois ele está vinculado a um evento em aberto/futuro");
+    if (!localRepository.existsById(id)) {
+        throw new EntityNotFoundException("Não é possível remover: Local não encontrado.");
     }
-    
-    local.setAtivo(false);
-    
-    localRepository.save(local);
+
+    boolean possuiEventoAtivo = eventoRepository.existsByLocalIdAndStatusNot(id, StatusEventoEnum.CANCELADO);
+
+    if (possuiEventoAtivo) {
+        throw new IllegalStateException("Não é possível remover o local, pois ele possui eventos ativos/não cancelados vinculados.");
+    }
+
+    localRepository.deleteById(id);
 }
 }

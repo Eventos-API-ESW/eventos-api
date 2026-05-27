@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 
 import unicv.poo.eventos_api.entity.Evento; // Ajustado para Evento
+import unicv.poo.eventos_api.enums.StatusEventoEnum;
 
 
 
@@ -18,7 +19,7 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
     boolean existsByLocalIdAndCapacidadeGreaterThan(Long localId, int capacidade);
 
     boolean existsByLocalIdAndDataAfter(Long localId, LocalDateTime data);
-    
+    boolean existsByLocalIdAndStatusNot(Long localId, StatusEventoEnum status);    
 }
 
 
