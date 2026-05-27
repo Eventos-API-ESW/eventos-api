@@ -1,6 +1,7 @@
 package unicv.poo.eventos_api.service;
 
 import unicv.poo.eventos_api.entity.Local;
+import unicv.poo.eventos_api.enums.StatusEventoEnum;
 import unicv.poo.eventos_api.exception.RegraNegocioException;
 import unicv.poo.eventos_api.dto.LocalRequestDTO;
 import unicv.poo.eventos_api.dto.LocalResponseDTO;
@@ -62,10 +63,18 @@ public class LocalService {
     }
     
 
-    public void deletar(@NonNull Long id){
-        if(!localRepository.existsById(id)){
-            throw new EntityNotFoundException("Não é possivel remover: Local não encontrado.");
-        }
-        localRepository.deleteById(id);
+   public void deletar(@NonNull Long id){
+   
+    if (!localRepository.existsById(id)) {
+        throw new EntityNotFoundException("Não é possível remover: Local não encontrado.");
     }
+
+    boolean possuiEventoAtivo = eventoRepository.existsByLocalIdAndStatusNot(id, StatusEventoEnum.CANCELADO);
+
+    if (possuiEventoAtivo) {
+        throw new IllegalStateException("Não é possível remover o local, pois ele possui eventos ativos/não cancelados vinculados.");
+    }
+
+    localRepository.deleteById(id);
+}
 }

@@ -27,21 +27,27 @@ public class EventoService {
 
     @Transactional
     public EventoResponseDto salvar(EventoRequestDto eventoRequestDto) {
-        Evento evento = eventoMapper.toEntity(eventoRequestDto);
-        Local local = localRepository.findById(eventoRequestDto.localId())
-                .orElseThrow(() -> new EntityNotFoundException("Local não encontrado."));
-        if (eventoRequestDto.capacidade() > local.getCapacidade()) {
-            throw new RegraNegocioException("A capacidade do evento não pode ser maior que a capacidade do local.");
-        }
-        boolean horarioOcupado = local.getEventos().stream()
-                .anyMatch(e -> e.getDataEvento().equals(eventoRequestDto.dataEvento())
-                        && e.getHorario().equals(eventoRequestDto.horario()));
-        if (horarioOcupado) {
-            throw new RegraNegocioException("Já existe um evento neste local na mesma data e horário.");
-        }
-        evento.setLocal(local);
-        return eventoMapper.toResponseDto(eventoRepository.save(evento));
+    Evento evento = eventoMapper.toEntity(eventoRequestDto);
+    Local local = localRepository.findById(eventoRequestDto.localId())
+            .orElseThrow(() -> new EntityNotFoundException("Local não encontrado."));
+    
+    
+    if (!local.isAtivo()) {
+        throw new RegraNegocioException("Não é possível cadastrar o evento: O local selecionado está cancelado/inativo.");
     }
+
+    if (eventoRequestDto.capacidade() > local.getCapacidade()) {
+        throw new RegraNegocioException("A capacidade do evento não pode ser maior que a capacidade do local.");
+    }
+    boolean horarioOcupado = local.getEventos().stream()
+            .anyMatch(e -> e.getDataEvento().equals(eventoRequestDto.dataEvento())
+                    && e.getHorario().equals(eventoRequestDto.horario()));
+    if (horarioOcupado) {
+        throw new RegraNegocioException("Já existe um evento neste local na mesma data e horário.");
+    }
+    evento.setLocal(local);
+    return eventoMapper.toResponseDto(eventoRepository.save(evento));
+}
 
     public List<EventoResponseDto> listarTodos() {
         List<Evento> eventos = eventoRepository.findAll();
