@@ -1,5 +1,7 @@
 package unicv.poo.eventos_api.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,30 +14,35 @@ import unicv.poo.eventos_api.service.IngressoService;
 import java.util.List;
 
 @RestController
+@Tag(name = "Ingressos", description = "Endpoints para gerenciamento de ingressos.")
 @RequestMapping("/api/ingressos")
 @RequiredArgsConstructor
 public class IngressoController {
 
     private final IngressoService ingressoService;
 
+    @Operation(summary = "Cria um ingresso")
     @PostMapping
     public ResponseEntity<IngressoResponseDto> criar(@RequestBody @Valid IngressoRequestDto requestDto) {
         IngressoResponseDto responseDto = ingressoService.salvar(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
+    @Operation(summary = "Lista todos os ingressos")
     @GetMapping
     public ResponseEntity<List<IngressoResponseDto>> listar() {
         List<IngressoResponseDto> responseDtos = ingressoService.listarTodos();
         return ResponseEntity.ok(responseDtos);
     }
 
+    @Operation(summary = "Busca um ingresso específico pelo ID")
     @GetMapping("/{id}")
     public ResponseEntity<IngressoResponseDto> buscarPorId(@PathVariable Long id) {
         IngressoResponseDto responseDto = ingressoService.buscarPorId(id);
         return ResponseEntity.ok(responseDto);
     }
 
+    @Operation(summary = "Atualiza um ingresso pelo ID")
     @PutMapping("/{id}")
     public ResponseEntity<IngressoResponseDto> atualizar(
             @PathVariable Long id,
@@ -45,6 +52,7 @@ public class IngressoController {
         return ResponseEntity.ok(responseDto);
     };
 
+    @Operation(summary = "Deleta um ingresso pelo ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         ingressoService.deletar(id);
