@@ -8,12 +8,15 @@ import unicv.poo.eventos_api.dto.EventoRequestDto;
 import unicv.poo.eventos_api.dto.EventoResponseDto;
 import unicv.poo.eventos_api.entity.Evento;
 import unicv.poo.eventos_api.entity.Local;
+import unicv.poo.eventos_api.enums.StatusEventoEnum;
 import unicv.poo.eventos_api.exception.RegraNegocioException;
 import unicv.poo.eventos_api.mapper.EventoMapper;
 import unicv.poo.eventos_api.repository.EventoRepository;
 import unicv.poo.eventos_api.repository.InscricaoRepository;
 import unicv.poo.eventos_api.repository.LocalRepository;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -91,5 +94,10 @@ public class EventoService {
             throw new EntityNotFoundException("Evento informado não existe.");
         }
         eventoRepository.deleteById(id);
+    }
+
+    public boolean existeEventoNoLocal(Long localId) {
+        List<Evento> eventosDoLocal = eventoRepository.findByLocalId(localId);
+        return !eventosDoLocal.isEmpty();
     }
 }
