@@ -100,4 +100,9 @@ public class EventoService {
         List<Evento> eventosDoLocal = eventoRepository.findByLocalId(localId);
         return !eventosDoLocal.isEmpty();
     }
+
+    public Evento buscarEntidadePorId(Long id) {
+        return eventoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+    }
 }

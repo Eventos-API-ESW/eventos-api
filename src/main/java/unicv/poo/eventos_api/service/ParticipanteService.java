@@ -2,6 +2,8 @@ package unicv.poo.eventos_api.service;
 
 
 import java.util.List;
+
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import unicv.poo.eventos_api.dto.ParticipanteRequestDto;
@@ -84,4 +86,10 @@ public class ParticipanteService {
         }
         participanteRepository.deleteById(id);
     }
+
+    public Participante buscarEntidadePorId(Long id) {
+        return participanteRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Participante não encontrado."));
+    }
+
 }

@@ -10,16 +10,19 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityNotFoundException;
 import unicv.poo.eventos_api.entity.Evento;
 import unicv.poo.eventos_api.entity.Inscricao;
+import unicv.poo.eventos_api.entity.Participante;
 import unicv.poo.eventos_api.exception.RegraNegocioException;
 import unicv.poo.eventos_api.repository.InscricaoRepository;
 import unicv.poo.eventos_api.repository.EventoRepository;
+import unicv.poo.eventos_api.repository.ParticipanteRepository;
 
 @Service
 @RequiredArgsConstructor
 public class InscricaoService {
 
     private final InscricaoRepository inscricaoRepository;
-    private final EventoRepository eventoRepository;
+    private final EventoService eventoService;
+    private final ParticipanteService participanteService;
 
     public List<Inscricao> listarTodas() {
         return inscricaoRepository.findAll();
@@ -47,12 +50,9 @@ public class InscricaoService {
             throw new RegraNegocioException("O ID do evento e do participante não podem ser nulos.");
         }
 
-        Evento eventoCompleto = eventoRepository.findById(eventoId)
-                .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado."));
+        Evento evento = eventoService.buscarEntidadePorId(eventoId);
 
-        LocalDate agora = LocalDate.now();
-
-        if (eventoCompleto.getDataEvento() != null && agora.isAfter(eventoCompleto.getDataEvento())) {
+        if (evento.getDataEvento() != null && LocalDate.now().isAfter(evento.getDataEvento())) {
             throw new RegraNegocioException("Não é possível se inscrever em um evento que já iniciou ou ocorreu.");
         }
 
@@ -62,7 +62,7 @@ public class InscricaoService {
             throw new RegraNegocioException("Este participante já está inscrito neste evento.");
         }
 
-        int capacidadeMaxima = eventoCompleto.getLocal().getCapacidade();
+        int capacidadeMaxima = evento.getLocal().getCapacidade();
         long totalInscritos = inscricaoRepository.countByEventoIdAndStatus(eventoId, "CONFIRMADA");
 
         if (totalInscritos >= capacidadeMaxima) {
@@ -70,7 +70,10 @@ public class InscricaoService {
                     + capacidadeMaxima + " vagas.");
         }
 
-        inscricao.setEvento(eventoCompleto);
+        Participante participante = participanteService.buscarEntidadePorId(participanteId);
+
+        inscricao.setEvento(evento);
+        inscricao.setParticipante(participante);
         inscricao.setDataInscricao(LocalDateTime.now());
         inscricao.setStatus("CONFIRMADA");
 
