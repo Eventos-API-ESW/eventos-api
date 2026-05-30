@@ -95,6 +95,10 @@ public class InscricaoService {
             throw new RegraNegocioException("Não é possível cancelar a inscrição de um evento que já ocorreu.");
         }
 
+        if (inscricao.getStatus().equals("CANCELADA")) {
+            throw new RegraNegocioException("A inscrição já está cancelada.");
+        }
+
         inscricao.setStatus("CANCELADA");
         return inscricaoRepository.save(inscricao);
     }
