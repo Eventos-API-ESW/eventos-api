@@ -3,6 +3,8 @@ package unicv.poo.eventos_api.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityNotFoundException;
@@ -13,27 +15,23 @@ import unicv.poo.eventos_api.repository.InscricaoRepository;
 import unicv.poo.eventos_api.repository.EventoRepository;
 
 @Service
+@RequiredArgsConstructor
 public class InscricaoService {
 
-    private final InscricaoRepository repository;
+    private final InscricaoRepository inscricaoRepository;
     private final EventoRepository eventoRepository;
 
-    public InscricaoService(InscricaoRepository repository, EventoRepository eventoRepository) {
-        this.repository = repository;
-        this.eventoRepository = eventoRepository;
-    }
-
     public List<Inscricao> listarTodas() {
-        return repository.findAll();
+        return inscricaoRepository.findAll();
     }
 
     public Inscricao buscarPorId(long id) {
-        return repository.findById(id)
+        return inscricaoRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Inscrição não encontrada."));
     }
 
     public List<Inscricao> listarPorEvento(Long eventoId) {
-        return repository.findByEventoId(eventoId);
+        return inscricaoRepository.findByEventoId(eventoId);
     }
 
     @Transactional
@@ -58,18 +56,14 @@ public class InscricaoService {
             throw new RegraNegocioException("Não é possível se inscrever em um evento que já iniciou ou ocorreu.");
         }
 
-         /*if ("CANCELADO".equalsIgnoreCase(eventoCompleto.getStatus())) {
-         throw new RegraNegocioException("Não é possível se inscrever em um evento que foi cancelado.");
-         }*/
-
-        boolean jaInscrito = repository.existsByParticipanteIdAndEventoIdAndStatus(participanteId, eventoId,
+        boolean jaInscrito = inscricaoRepository.existsByParticipanteIdAndEventoIdAndStatus(participanteId, eventoId,
                 "CONFIRMADA");
         if (jaInscrito) {
             throw new RegraNegocioException("Este participante já está inscrito neste evento.");
         }
 
         int capacidadeMaxima = eventoCompleto.getLocal().getCapacidade();
-        long totalInscritos = repository.countByEventoIdAndStatus(eventoId, "CONFIRMADA");
+        long totalInscritos = inscricaoRepository.countByEventoIdAndStatus(eventoId, "CONFIRMADA");
 
         if (totalInscritos >= capacidadeMaxima) {
             throw new RegraNegocioException("Desculpe, esse evento já atingiu a capacidade máxima de "
@@ -80,7 +74,7 @@ public class InscricaoService {
         inscricao.setDataInscricao(LocalDateTime.now());
         inscricao.setStatus("CONFIRMADA");
 
-        return repository.save(inscricao);
+        return inscricaoRepository.save(inscricao);
     }
 
     @Transactional
@@ -89,7 +83,7 @@ public class InscricaoService {
             throw new RegraNegocioException("O ID da inscrição não pode ser nulo.");
         }
 
-        Inscricao inscricao = repository.findById(id)
+        Inscricao inscricao = inscricaoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Inscrição não encontrada."));
 
         LocalDate hoje = LocalDate.now();
@@ -99,6 +93,6 @@ public class InscricaoService {
         }
 
         inscricao.setStatus("CANCELADA");
-        return repository.save(inscricao);
+        return inscricaoRepository.save(inscricao);
     }
 }

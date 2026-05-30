@@ -2,6 +2,8 @@ package unicv.poo.eventos_api.controller;
 
 import jakarta.validation.Valid;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,16 +21,12 @@ import unicv.poo.eventos_api.service.InscricaoService;
 
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/inscricoes")
 public class InscricaoController {
 
     private final InscricaoService service;
     private final InscricaoMapper mapper;
-
-    public InscricaoController(InscricaoService service, InscricaoMapper mapper) {
-        this.service = service;
-        this.mapper = mapper;
-    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -55,9 +53,9 @@ public class InscricaoController {
     @GetMapping("/evento/{eventoId}")
     public List<InscricaoResponseDTO> listarPorEvento(@PathVariable Long eventoId) {
         return service.listarPorEvento(eventoId)
-        .stream()
-        .map(mapper::toResponseDto)
-        .toList();
+            .stream()
+            .map(mapper::toResponseDto)
+            .toList();
     }
 
     @PatchMapping("/{id}/cancelar")
