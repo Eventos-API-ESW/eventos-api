@@ -13,8 +13,6 @@ import unicv.poo.eventos_api.entity.Inscricao;
 import unicv.poo.eventos_api.entity.Participante;
 import unicv.poo.eventos_api.exception.RegraNegocioException;
 import unicv.poo.eventos_api.repository.InscricaoRepository;
-import unicv.poo.eventos_api.repository.EventoRepository;
-import unicv.poo.eventos_api.repository.ParticipanteRepository;
 
 @Service
 @RequiredArgsConstructor

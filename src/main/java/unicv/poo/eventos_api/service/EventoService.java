@@ -93,6 +93,11 @@ public class EventoService {
         if (!eventoRepository.existsById(id)) {
             throw new EntityNotFoundException("Evento informado não existe.");
         }
+
+        if (inscricaoRepository.existsByEventoId(id)) {
+            throw new RegraNegocioException("Existem inscrições para este evento.");
+        }
+
         eventoRepository.deleteById(id);
     }
 
